@@ -2,7 +2,7 @@ import 'dart:math';
 
 class NumberController {
   bool isPrime(int number) {
-    number = number.abs();  // Ensure the number is treated as positive
+    number = number.abs();  
     if (number < 2) return false;
     for (int i = 2; i <= sqrt(number).toInt(); i++) {
       if (number % i == 0) return false;
@@ -11,12 +11,12 @@ class NumberController {
   }
 
   bool isComposite(int number) {
-    number = number.abs();  // Ensure the number is treated as positive
+    number = number.abs();  
     return number > 1 && !isPrime(number);
   }
 
   bool isPerfectSquare(int number) {
-    number = number.abs();  // Ignore sign for square check
+    number = number.abs();  
     int root = sqrt(number).toInt();
     return root * root == number;
   }
@@ -27,7 +27,7 @@ class NumberController {
   }
 
   bool isFibonacci(int number) {
-    number = number.abs();  // Ensure Fibonacci check works for negative numbers
+    number = number.abs();  
     int a = 5 * number * number;
     return isPerfectSquare(a + 4) || isPerfectSquare(a - 4);
   }
@@ -45,11 +45,11 @@ class NumberController {
       sum += pow(digit, digits).toInt();
       temp ~/= 10;
     }
-    return sum == number.abs(); // Compare with absolute
+    return sum == number.abs(); 
   }
 
   bool isSquareFree(int number) {
-    number = number.abs();  // Ensure square-free check works with negatives
+    number = number.abs();  
     for (int i = 2; i * i <= number; i++) {
       if (number % (i * i) == 0) return false;
     }
@@ -57,7 +57,7 @@ class NumberController {
   }
 
   bool isHarshad(int number) {
-    number = number.abs();  // Harshad works for absolute value
+    number = number.abs();  
     int sum = number.toString().split('').map(int.parse).reduce((a, b) => a + b);
     return number % sum == 0;
   }
@@ -136,7 +136,7 @@ class NumberController {
   }
 
   List<int> getFactors(int number) {
-    number = number.abs(); // Ensure it works for negative numbers
+    number = number.abs(); 
     List<int> factors = [];
     for (int i = 1; i <= number ~/ 2; i++) {
       if (number % i == 0) {

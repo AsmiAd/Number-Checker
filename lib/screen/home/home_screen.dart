@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; 
 import '../../controller/number_checker_controller.dart';
 import '../../controller/settings_controller.dart';
-import 'package:flutter/services.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -19,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _fetchNumberInfo() {
   final input = _controller.text.trim();
-  print("User entered: '$input'");
+  debugPrint("User entered: '$input'");
 
   if (input.isEmpty) {
     setState(() {
@@ -44,23 +43,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // void _fetchNumberInfo() {
   //   final input = _controller.text;
-
   //   if (input.isEmpty) {
   //     setState(() {
   //       _numberInfo = {"Error" : "Please enter a number!"};
   //     });
   //     return;
   //   }
-
   //   final number = int.tryParse(input);
-
   //   if (number == null) {
   //     setState(() {
   //       _numberInfo = {"Error" : "Invalid input! Please enter a valid integer."};
   //     });
   //     return;
   //   }
-
   //   setState(() {
   //     _numberInfo = _numberController.getNumberInfo(number);
   //   });
@@ -111,8 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
     fillColor: Colors.grey[200],
   ),
 ),
-
-
 
               // TextField(
               //   controller: _controller,

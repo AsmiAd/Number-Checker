@@ -49,7 +49,8 @@ class NumberController {
   }
 
   bool isSquareFree(int number) {
-    number = number.abs();  
+    number = number.abs();
+    if (number == 0) return false;
     for (int i = 2; i * i <= number; i++) {
       if (number % (i * i) == 0) return false;
     }
@@ -57,8 +58,9 @@ class NumberController {
   }
 
   bool isHarshad(int number) {
-    number = number.abs();  
+    number = number.abs();
     int sum = number.toString().split('').map(int.parse).reduce((a, b) => a + b);
+    if (sum == 0) return false;
     return number % sum == 0;
   }
 
@@ -136,7 +138,8 @@ class NumberController {
   }
 
   List<int> getFactors(int number) {
-    number = number.abs(); 
+    number = number.abs();
+    if (number == 0) return [];
     List<int> factors = [];
     for (int i = 1; i <= number ~/ 2; i++) {
       if (number % i == 0) {
@@ -195,7 +198,7 @@ class NumberController {
     final binary = number.toRadixString(2);
     final octal = number.toRadixString(8);
     final hex = number.toRadixString(16).toUpperCase();
-    final factors = getFactors(number).join(", ");
+    final factors = number == 0 ? "All integers" : getFactors(number).join(", ");
     final fact = getSpecialFact(number);
     final isFib = isFibonacci(number) ? "Yes" : "No";
     final isPalin = isPalindrome(number) ? "Yes" : "No";

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; 
+import '../../controller/history_controller.dart';
 import '../../controller/number_checker_controller.dart';
 import '../../controller/settings_controller.dart';
 
@@ -17,49 +18,38 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, String> _numberInfo = {};
 
   void _fetchNumberInfo() {
-  final input = _controller.text.trim();
-  debugPrint("User entered: '$input'");
+    final input = _controller.text.trim();
+    debugPrint("User entered: '$input'");
 
-  if (input.isEmpty) {
+    if (input.isEmpty) {
+      setState(() {
+        _numberInfo = {"Error": "Please enter a number!"};
+      });
+      return;
+    }
+
+    final number = int.tryParse(input);
+    if (number == null) {
+      setState(() {
+        _numberInfo = {"Error": "Invalid input! Please enter a valid integer."};
+      });
+      return;
+    }
+
+    final history = context.read<HistoryController>();
+    history.addEntry(number);
+
     setState(() {
-      _numberInfo = {"Error": "Please enter a number!"};
+      _numberInfo = _numberController.getNumberInfo(number);
     });
-    return;
   }
 
-  final number = int.tryParse(input);
-  if (number == null) {
-    setState(() {
-      _numberInfo = {"Error": "Invalid input! Please enter a valid integer."};
-    });
-    return;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
-
-  setState(() {
-    _numberInfo = _numberController.getNumberInfo(number);
-  });
-}
-
-
-  // void _fetchNumberInfo() {
-  //   final input = _controller.text;
-  //   if (input.isEmpty) {
-  //     setState(() {
-  //       _numberInfo = {"Error" : "Please enter a number!"};
-  //     });
-  //     return;
-  //   }
-  //   final number = int.tryParse(input);
-  //   if (number == null) {
-  //     setState(() {
-  //       _numberInfo = {"Error" : "Invalid input! Please enter a valid integer."};
-  //     });
-  //     return;
-  //   }
-  //   setState(() {
-  //     _numberInfo = _numberController.getNumberInfo(number);
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -95,33 +85,17 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 10),
 
               TextField(
-  controller: _controller,
-  keyboardType: const TextInputType.numberWithOptions(signed: true),
-  decoration: InputDecoration(
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-    ),
-    hintText: "Enter a number",
-    filled: true,
-    fillColor: Colors.grey[200],
-  ),
-),
-
-              // TextField(
-              //   controller: _controller,
-              //   keyboardType: TextInputType.number,
-              //   inputFormatters: [
-              //     FilteringTextInputFormatter.allow(RegExp(r'^-?\d*$')),
-              //   ],
-              //   decoration: InputDecoration(
-              //     border: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(8),
-              //     ),
-              //     hintText: "Enter a number",
-              //     filled: true,
-              //     fillColor: Colors.grey[200],
-              //   ),
-              // ),
+                controller: _controller,
+                keyboardType: const TextInputType.numberWithOptions(signed: true),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  hintText: "Enter a number",
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                ),
+              ),
 
               const SizedBox(height: 20),
 
@@ -190,8 +164,101 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+              const SizedBox(height: 24),
+              _HistorySection(
+                fontSize: settings.fontSize,
+                fontColor: settings.fontColor,
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HistorySection extends StatelessWidget {
+  const _HistorySection({
+    required this.fontSize,
+    required this.fontColor,
+  });
+
+  final double fontSize;
+  final Color fontColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final history = context.watch<HistoryController>();
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Text(
+                  "History",
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                    color: fontColor,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed:
+                      history.entries.isEmpty ? null : history.clearHistory,
+                  child: const Text("Clear"),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (history.entries.isEmpty)
+              Text(
+                "No numbers checked yet.",
+                style: TextStyle(color: fontColor.withAlpha(140)),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: history.entries.length,
+                separatorBuilder: (_, __) => const Divider(height: 1),
+                itemBuilder: (context, index) {
+                  final entry = history.entries[index];
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      entry.number.toString(),
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        color: fontColor,
+                      ),
+                    ),
+                    subtitle: Text(
+                      entry.checkedAt.toLocal().toString(),
+                      style: TextStyle(
+                        fontSize: fontSize - 2,
+                        color: fontColor.withAlpha(160),
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(
+                        entry.isFavorite ? Icons.star : Icons.star_border,
+                        color: entry.isFavorite ? Colors.amber : Colors.grey,
+                      ),
+                      onPressed: () => history.toggleFavorite(entry),
+                    ),
+                  );
+                },
+              ),
+          ],
         ),
       ),
     );

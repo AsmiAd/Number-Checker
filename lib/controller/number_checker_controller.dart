@@ -22,8 +22,8 @@ class NumberController {
   }
 
   bool isPerfectCube(int number) {
-    int root = pow(number.abs(), 1 / 3).round();
-    return root * root * root == number;
+    final int root = pow(number.abs(), 1 / 3).round();
+    return root * root * root == number.abs();
   }
 
   bool isFibonacci(int number) {
@@ -88,6 +88,8 @@ class NumberController {
     if (number == 0) return "Zero";
     if (number < 0) return "Minus ${numberToWords(-number)}";
 
+    final originalNumber = number;
+
     final List<String> units = [
       "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"
     ];
@@ -99,7 +101,13 @@ class NumberController {
       "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
     ];
     final List<String> thousands = [
-      "", "Thousand", "Million", "Billion"
+      "",
+      "Thousand",
+      "Million",
+      "Billion",
+      "Trillion",
+      "Quadrillion",
+      "Quintillion",
     ];
 
     String convertLessThan1000(int n) {
@@ -125,6 +133,10 @@ class NumberController {
       int chunk = number % 1000;
       if (chunk != 0) {
         String chunkWords = convertLessThan1000(chunk);
+        if (chunkCount >= thousands.length) {
+          return originalNumber.toString();
+        }
+
         if (thousands[chunkCount].isNotEmpty) {
           chunkWords += ' ${thousands[chunkCount]}';
         }

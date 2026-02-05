@@ -62,7 +62,5 @@ class SettingsController extends ChangeNotifier {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_fontColorKey, color.toARGB32());
-    _fontColor = color;
-    notifyListeners();
   }
 }

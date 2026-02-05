@@ -7,10 +7,12 @@ import 'controller/settings_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  final settingsController = await SettingsController.create();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => SettingsController()),
+        ChangeNotifierProvider.value(value: settingsController),
         ChangeNotifierProvider(create: (_) => HistoryController()),
       ],
       child: const MyApp(),
@@ -27,7 +29,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       theme: ThemeData(
-        brightness: Brightness.light, 
+        brightness: Brightness.light,
         scaffoldBackgroundColor: settings.backgroundColor,
         textTheme: TextTheme(
           bodyLarge: TextStyle(

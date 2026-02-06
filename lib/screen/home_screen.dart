@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; 
-import '../../controller/history_controller.dart';
-import '../../controller/number_checker_controller.dart';
-import '../../controller/settings_controller.dart';
+import '../controller/history_controller.dart';
+import '../controller/number_checker_controller.dart';
+import '../controller/settings_controller.dart';
 
 
 class HomeScreen extends StatefulWidget {

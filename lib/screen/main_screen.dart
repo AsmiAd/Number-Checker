@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'home/home_screen.dart';
-import 'learn/learn_screen.dart';
-import 'settings/settings_screen.dart';
+import 'home_screen.dart';
+import 'learn_screen.dart';
+import 'settings_screen.dart';
+import 'visualizations_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -16,6 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = const [
     HomeScreen(),
     LearnScreen(),
+    VisualizationsScreen(),
     SettingsScreen(),
   ];
 
@@ -24,9 +26,9 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFFADD8E6) ,
-        selectedItemColor: Colors.black, 
-        unselectedItemColor: Colors.grey, 
+        backgroundColor: const Color(0xFFADD8E6),
+        selectedItemColor: Colors.black,
+        unselectedItemColor: Colors.grey,
         currentIndex: _currentIndex,
         onTap: (newIndex) {
           setState(() {
@@ -44,9 +46,13 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Learn',
           ),
           BottomNavigationBarItem(
-      icon: Icon(Icons.settings),
-      label: 'Settings', 
-    ),
+            icon: Icon(Icons.show_chart),
+            label: 'Visualize',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
         ],
       ),
     );

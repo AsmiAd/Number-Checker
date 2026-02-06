@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'screen/splash_screen.dart';
+import 'splash_screen.dart';
 import 'controller/history_controller.dart';
 import 'controller/settings_controller.dart';
 

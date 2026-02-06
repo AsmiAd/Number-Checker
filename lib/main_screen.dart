@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
-import 'learn_screen.dart';
-import 'settings_screen.dart';
-import 'visualizations_screen.dart';
+import 'screen/home_screen.dart';
+import 'screen/learn_screen.dart';
+import 'screen/settings_screen.dart';
+import 'screen/visualizations_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

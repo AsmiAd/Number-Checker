@@ -19,6 +19,7 @@ class _VisualizationsScreenState extends State<VisualizationsScreen> {
   SequenceType _sequenceType = SequenceType.fibonacci;
   double _sequenceCount = 10;
   double _primeLimit = 100;
+  double _primeBuckets = 10;
 
   @override
   void dispose() {
@@ -34,7 +35,11 @@ class _VisualizationsScreenState extends State<VisualizationsScreen> {
     final chartColor = theme.colorScheme.primary;
 
     final fibonacciValues = _generateFibonacci(_sequenceCount.toInt());
-    final primeDistribution = _buildPrimeDistribution(_primeLimit.toInt(), 10);
+    final primeDistribution = _buildPrimeDistribution(
+      _primeLimit.toInt(),
+      _primeBuckets.toInt(),
+    );
+
 
     final factorInput = int.tryParse(_factorController.text.trim()) ?? 0;
     final digitInput = int.tryParse(_digitController.text.trim()) ?? 0;
@@ -58,6 +63,11 @@ class _VisualizationsScreenState extends State<VisualizationsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          _HelpCard(
+            fontSize: settings.fontSize,
+            fontColor: settings.fontColor,
+          ),
+          const SizedBox(height: 20),
           _SectionCard(
             title: 'Interactive Number Sequences',
             fontSize: settings.fontSize,
@@ -123,6 +133,23 @@ class _VisualizationsScreenState extends State<VisualizationsScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      _InsightRow(
+                        items: [
+                          _InsightItem(
+                            label: 'Latest value',
+                            value: fibonacciValues.isEmpty
+                                ? '—'
+                                : fibonacciValues.last.toString(),
+                          ),
+                          _InsightItem(
+                            label: 'Growth',
+                            value: _describeGrowth(fibonacciValues),
+                          ),
+                        ],
+                        fontSize: settings.fontSize,
+                        fontColor: settings.fontColor,
+                      ),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
@@ -160,6 +187,26 @@ class _VisualizationsScreenState extends State<VisualizationsScreen> {
                           });
                         },
                       ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Number of buckets',
+                        style: TextStyle(
+                          fontSize: settings.fontSize - 2,
+                          color: settings.fontColor.withAlpha(180),
+                        ),
+                      ),
+                      Slider(
+                        min: 5,
+                        max: 20,
+                        divisions: 15,
+                        value: _primeBuckets,
+                        label: _primeBuckets.toInt().toString(),
+                        onChanged: (value) {
+                          setState(() {
+                            _primeBuckets = value;
+                          });
+                        },
+                      ),
                       SizedBox(
                         height: 220,
                         child: CustomPaint(
@@ -168,6 +215,25 @@ class _VisualizationsScreenState extends State<VisualizationsScreen> {
                             barColor: chartColor,
                           ),
                         ),
+                      ),
+                      const SizedBox(height: 12),
+                      _InsightRow(
+                        items: [
+                          _InsightItem(
+                            label: 'Total primes',
+                            value: _countPrimes(_primeLimit.toInt()).toString(),
+                          ),
+                          _InsightItem(
+                            label: 'Busiest bucket',
+                            value: _describeBusiestBucket(
+                              primeDistribution,
+                              _primeLimit.toInt(),
+                              _primeBuckets.toInt(),
+                            ),
+                          ),
+                        ],
+                        fontSize: settings.fontSize,
+                        fontColor: settings.fontColor,
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -388,6 +454,115 @@ class _SectionCard extends StatelessWidget {
     );
   }
 }
+
+class _HelpCard extends StatelessWidget {
+  const _HelpCard({
+    required this.fontSize,
+    required this.fontColor,
+  });
+
+  final double fontSize;
+  final Color fontColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: Colors.blue.shade50,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'How to use this page',
+              style: TextStyle(
+                fontSize: fontSize + 2,
+                fontWeight: FontWeight.bold,
+                color: fontColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '• Pick a sequence type and drag the sliders to see charts update live.',
+              style: TextStyle(fontSize: fontSize - 1, color: fontColor),
+            ),
+            Text(
+              '• Use the factor tree and digit sections to explore a specific number.',
+              style: TextStyle(fontSize: fontSize - 1, color: fontColor),
+            ),
+            Text(
+              '• Chips show results you can compare at a glance.',
+              style: TextStyle(fontSize: fontSize - 1, color: fontColor),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InsightRow extends StatelessWidget {
+  const _InsightRow({
+    required this.items,
+    required this.fontSize,
+    required this.fontColor,
+  });
+
+  final List<_InsightItem> items;
+  final double fontSize;
+  final Color fontColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: items
+          .map(
+            (item) => Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.label,
+                      style: TextStyle(
+                        fontSize: fontSize - 3,
+                        color: fontColor.withAlpha(160),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.value,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.bold,
+                        color: fontColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _InsightItem {
+  const _InsightItem({required this.label, required this.value});
+
+  final String label;
+  final String value;
+}
+
 
 class _LineChartPainter extends CustomPainter {
   _LineChartPainter({
@@ -693,4 +868,33 @@ _DigitSteps _buildDigitSteps(int number) {
     sumSteps: sumSteps,
     productSteps: productSteps,
   );
+}
+
+String _describeGrowth(List<int> values) {
+  if (values.length < 2) {
+    return '—';
+  }
+  final previous = values[values.length - 2];
+  final latest = values.last;
+  if (previous == 0) {
+    return 'Jump to $latest';
+  }
+  final ratio = latest / previous;
+  return '${ratio.toStringAsFixed(2)}× from last';
+}
+
+int _countPrimes(int limit) {
+  return _generatePrimes(limit).length;
+}
+
+String _describeBusiestBucket(List<int> distribution, int limit, int buckets) {
+  if (distribution.isEmpty || buckets <= 0) {
+    return '—';
+  }
+  final maxCount = distribution.reduce(max);
+  final index = distribution.indexOf(maxCount);
+  final bucketSize = max(1, (limit / buckets).ceil());
+  final start = index * bucketSize + 1;
+  final end = min((index + 1) * bucketSize, limit);
+  return '$start-$end ($maxCount primes)';
 }
